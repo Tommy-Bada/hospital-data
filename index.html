@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hospital Data Submission Form</title>
+    <style>
+      /* Basic form styling */
+      form {
+        display: flex;
+        flex-direction: column;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+      }
+      input {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      button {
+        position: relative;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 4px;
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+        overflow: hidden;
+        font-size: 16px;
+        text-align: center;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      h1 {
+        text-align: center;
+      }
+
+      /* Loader styling */
+      .loader {
+        transform: translate(-50%, -50%);
+        border: 5px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 5px solid #ffffff;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: none; /* Hidden by default */
+        margin-right: auto;
+        margin-left: auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Hide text when loader is visible */
+      .button-text {
+        display: inline-block;
+      }
+      .button-loading .button-text {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hospital Data Submission Form</h1>
+    <form id="hospital-form">
+      <input
+        name="Name"
+        type="text"
+        placeholder="Hospital Name"
+        required
+      /><br />
+      <input
+        name="Address"
+        type="text"
+        placeholder="Hospital Address"
+        required
+      /><br />
+      <input
+        name="Phone"
+        type="text"
+        placeholder="Hospital Phone Number"
+        required
+      /><br />
+      <button type="submit" id="submit-button">
+        <span class="button-text">Send</span>
+        <div class="loader" id="loader"></div>
+      </button>
+    </form>
+
+    <script>
+      document
+        .getElementById("hospital-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent default form submission
+
+          const form = event.target;
+          const formData = new FormData(form);
+          const loader = document.getElementById("loader");
+          const button = document.getElementById("submit-button");
+
+          // Show the loader and hide the text
+          loader.style.display = "block";
+          button.classList.add("button-loading");
+          button.disabled = true;
+
+          fetch(
+            "https://script.google.com/macros/s/AKfycbzBB_55ThKHiVNH6RsHA772VGp-OLXO3UBWSnZpdj9iEFbrkhQO2GbRBulEtrmoLeCV/exec",
+            {
+              method: "POST",
+              body: formData,
+            }
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.result === "success") {
+                alert("Data submitted successfully!");
+                form.reset(); // Optional: reset the form fields
+              } else {
+                alert("Failed to submit data: " + data.error); // Updated to display the error message
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert(
+                `An error occurred: ${error.message || "Please try again."}`
+              );
+            })
+            .finally(() => {
+              loader.style.display = "none";
+              button.classList.remove("button-loading");
+              button.disabled = false;
+            });
+        });
+    </script>
+  </body>
+</html>
